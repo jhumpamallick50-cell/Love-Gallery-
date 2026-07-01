@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>Magic Ring of Love ❤️</title>
+   
+   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+   
+   <style>
+       * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+       body { background: radial-gradient(circle at center, #1a0812 0%, #050103 100%); font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; touch-action: none; transition: background 1s ease; }
+
+       /* Dynamic Visuals Container */
+       #visual-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+       
+       /* Floating Hearts Style - Vibrant */
+       .bg-heart { position: absolute; color: rgba(255, 102, 147, 0.6); text-shadow: 0 0 10px rgba(255, 102, 147, 0.4); animation: floatUp 9s linear forwards; }
+       
+       /* Stardust Style - Bright */
+       .stardust { position: absolute; width: 4px; height: 4px; background: #ffe6eb; border-radius: 50%; box-shadow: 0 0 12px #ffb3c6, 0 0 25px #fff; animation: twinkle 3s ease-in-out infinite; }
+       
+       @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(-10vh) scale(1.5) rotate(360deg); opacity: 0; } }
+       @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.3); } }
+
+       /* Titles */
+       .title-container { position: absolute; top: 40px; left: 20px; text-align: left; z-index: 10; pointer-events: none; }
+       .title-container h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: #e0bfb8; letter-spacing: 1px; text-shadow: 0 0 15px rgba(224, 191, 184, 0.3); }
+       .title-container p { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
+
+       /* Top Right Music Player Icon */
+       .music-player-container { position: fixed; top: 30px; right: 20px; z-index: 150; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+       .music-disc { width: 55px; height: 55px; border-radius: 50%; background: repeating-radial-gradient(#111 0%, #000 10%, #111 20%); border: 2px solid #e0bfb8; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(224, 191, 184, 0.3); position: relative; transition: 0.3s ease; }
+       .music-disc::after { content: '🎵'; position: absolute; font-size: 14px; width: 22px; height: 22px; background: #e0bfb8; border-radius: 50%; border: 2px solid #050103; display: flex; align-items: center; justify-content: center; color: #050103; }
+       .music-disc.spinning { animation: spinRecord 4s linear infinite; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 25px rgba(224, 191, 184, 0.6); }
+       .music-hint { font-size: 0.55rem; color: rgba(224, 191, 184, 0.6); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite; text-align: center; line-height: 1.2; }
+
+       @keyframes spinRecord { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+       /* Music Pie Menu */
+       .music-pie-menu { position: fixed; z-index: 1000; width: 0; height: 0; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+       .music-pie-menu.active { opacity: 1; }
+       .pie-center-glow { position: absolute; width: 120px; height: 120px; background: radial-gradient(circle, rgba(224, 191, 184, 0.15) 0%, transparent 70%); transform: translate(-50%, -50%); border-radius: 50%; }
+       .pie-option { position: absolute; width: 45px; height: 45px; border-radius: 50%; background: rgba(10, 3, 6, 0.9); border: 1px solid #e0bfb8; color: #e0bfb8; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transform: translate(-50%, -50%); box-shadow: 0 0 15px rgba(0,0,0,0.8); transition: all 0.2s; }
+       .pie-option.highlighted { transform: translate(-50%, -50%) scale(1.3); background: #e0bfb8; color: #0a0306; box-shadow: 0 0 25px rgba(224, 191, 184, 0.8); z-index: 1001; }
+       .pie-song-title { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: 250px; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); pointer-events: none; }
+
+       /* Main Image Ring */
+       .ring-container { position: relative; width: 320px; height: 320px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
+       .center-orb { position: absolute; width: 90px; height: 90px; background: linear-gradient(135deg, #2a0c18, #0a0306); border: 2px solid #e0bfb8; border-radius: 50%; z-index: 50; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.65rem; font-weight: 500; color: #e0bfb8; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 30px rgba(224, 191, 184, 0.2), inset 0 0 15px rgba(224, 191, 184, 0.1); transition: 0.3s; user-select: none; }
+       .center-orb.active { transform: scale(0.92); box-shadow: 0 0 50px rgba(224, 191, 184, 0.6), inset 0 0 25px rgba(224, 191, 184, 0.4); }
+       .center-orb.unlocked { font-size: 2.5rem; background: linear-gradient(135deg, #ff4d6d, #2a0c18); box-shadow: 0 0 50px rgba(255, 77, 109, 0.6); border-color: #ff4d6d; animation: heartbeat 1.5s infinite; }
+       
+       @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+       /* Fluent Pointers */
+       .pointer-wrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; pointer-events: none; z-index: 30; transition: transform 0.1s cubic-bezier(0.2, 0, 0.2, 1); will-change: transform; }
+       .pointer-line { position: absolute; top: 50%; left: 50%; width: 60%; height: 2px; background: linear-gradient(90deg, transparent 10%, rgba(224, 191, 184, 0.5) 50%, #ffffff 100%); transform-origin: left center; transform: translateY(-50%); box-shadow: 0 0 15px #e0bfb8, 0 0 5px #fff; opacity: 0; transition: opacity 0.3s; }
+       .pointer-line::after { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px 4px #e0bfb8; }
+       .center-orb.active ~ .pointer-wrapper .pointer-line, .music-pie-menu.active .pointer-line { opacity: 1; }
+
+       /* Ring Thumbnails */
+       .ring-item { position: absolute; width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(224, 191, 184, 0.15); box-shadow: 0 10px 20px rgba(0,0,0,0.6); transition: 0.3s; z-index: 20; transform-origin: center; filter: grayscale(80%); background: #1a0812; }
+       .ring-item.viewed { filter: grayscale(0%); border-color: rgba(224, 191, 184, 0.5); }
+       .ring-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+       .ring-item.highlighted { border-color: #e0bfb8; transform: scale(1.45) !important; box-shadow: 0 0 30px rgba(224, 191, 184, 0.7); z-index: 40; filter: grayscale(0%); }
+
+       /* Modals */
+       .full-screen-modal, .letter-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 1, 3, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.5s; padding: 20px; }
+       .full-screen-modal.show, .letter-modal.show { opacity: 1; pointer-events: all; }
+       
+       .modal-content-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; transform: scale(0.9); transition: 0.6s; }
+       .full-screen-modal.show .modal-content-wrapper { transform: scale(1); }
+       .full-screen-img { max-width: 100%; max-height: 60vh; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(224, 191, 184, 0.15); border: 1px solid rgba(224, 191, 184, 0.3); background: #1a0812; }
+       
+       .modal-caption { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: #e0bfb8; margin-top: 25px; text-align: center; font-style: italic; font-weight: 600; text-shadow: 0 4px 10px rgba(0,0,0,0.5); line-height: 1.3; }
+       .close-btn { margin-top: 30px; padding: 12px 35px; background: rgba(224, 191, 184, 0.15); border: 1px solid #e0bfb8; color: #e0bfb8; border-radius: 30px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 500; cursor: pointer; }
+
+       /* Letter Styling */
+       .letter-modal { z-index: 300; background: rgba(10, 3, 6, 0.98); }
+       .letter-content { font-family: 'Cormorant Garamond', serif; color: #e0bfb8; text-align: center; max-width: 400px; line-height: 1.6; transform: translateY(20px); transition: 0.6s; }
+       .letter-modal.show .letter-content { transform: translateY(0); }
+       .letter-content h2 { font-size: 2.2rem; margin-bottom: 20px; font-style: italic; color: #ff85a2; }
+       .letter-content p { font-size: 1.15rem; margin-bottom: 15px; font-family: 'Montserrat', sans-serif; font-weight: 300; }
+
+       .instruction { position: absolute; bottom: 40px; font-size: 0.7rem; color: rgba(224, 191, 184, 0.5); letter-spacing: 2px; text-transform: uppercase; text-align: center; animation: pulse 2s infinite; }
+       @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+   </style>
+</head>
+<body>
+
+   <!-- Dynamic Background Effects -->
+   <div id="visual-container"></div>
+
+   <!-- Music Player -->
+   <div class="music-player-container" id="musicControl">
+       <div class="music-disc" id="musicDisc"></div>
+       <div class="music-hint">Tap: Play<br>Hold: Change</div>
+       <audio id="bgAudio" loop></audio>
+   </div>
+
+   <!-- Music Pie Menu -->
+   <div class="music-pie-menu" id="musicPieMenu">
+       <div class="pie-center-glow"></div>
+       <div class="pointer-wrapper" id="musicPointerWrapper">
+           <div class="pointer-line" style="width: 90px;"></div>
+       </div>
+       <div id="pieOptionsContainer"></div>
+       <div class="pie-song-title" id="pieSongTitle">Drag to select song</div>
+   </div>
+
+   <div class="title-container">
+       <h1>Our Magic ❤️</h1>
+       <p>For Madamji</p>
+   </div>
+
+   <!-- Main Ring -->
+   <div class="ring-container" id="ringContainer">
+       <div class="center-orb" id="centerOrb">Hold &<br>Move</div>
+       <div class="pointer-wrapper" id="pointerWrapper"><div class="pointer-line"></div></div>
+       <div id="thumbnails"></div>
+   </div>
+   <div class="instruction" id="mainInstruction">Hold center & drag finger</div>
+
+   <!-- Image Modal -->
+   <div class="full-screen-modal" id="modal">
+       <div class="modal-content-wrapper">
+           <img src="" class="full-screen-img" id="fullImg">
+           <div class="modal-caption" id="modalCaption"></div>
+           <div class="close-btn" id="closeBtn">Close</div>
+       </div>
+   </div>
+
+   <!-- Secret Love Letter Modal -->
+   <div class="letter-modal" id="letterModal">
+       <div class="letter-content">
+           <h2>Dear Bipasha,</h2>
+           <p>Every single day spent with you feels like a beautiful dream. From our silly fights and little abhimans to those sweet moments of making up—everything makes my life so colorful.</p>
+           <p>You are not just a person to me; you are my entire world. Even 50 years from now, I promise to hold you and love you exactly like this.</p>
+           <p>My kuchu puchu, my rasmalai, my Madamji... I love you more than words can ever express. ❤️</p>
+           <p style="margin-top: 30px; font-style: italic; color: #ff4d6d;">— Yours, Anik</p>
+           <div class="close-btn" style="margin-top: 40px;" id="closeLetterBtn">Close</div>
+       </div>
+   </div>
+
+   <!-- Confetti Script -->
+   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+   
+   <script>
+       // ============================================
+       // DYNAMIC VISUAL EFFECTS LOGIC (MORE VISIBLE)
+       // ============================================
+       const visualContainer = document.getElementById('visual-container');
+       let currentEffectInterval;
+
+       function clearEffects() {
+           clearInterval(currentEffectInterval);
+           visualContainer.innerHTML = '';
+       }
+
+       function playHearts() {
+           clearEffects();
+           currentEffectInterval = setInterval(() => {
+               let h = document.createElement('div'); h.className = 'bg-heart'; 
+               h.innerText = ['❤️', '✨', '💖', '💕'][Math.floor(Math.random()*4)];
+               h.style.left = Math.random()*100 + 'vw';
+               h.style.fontSize = (Math.random() * 20 + 15) + 'px'; 
+               visualContainer.appendChild(h);
+               setTimeout(() => h.remove(), 9000);
+           }, 600); 
+       }
+
+       function playConfetti() {
+           clearEffects();
+           currentEffectInterval = setInterval(() => {
+               confetti({ 
+                   particleCount: 15, 
+                   spread: 100, 
+                   origin: { y: 0.1, x: Math.random() }, 
+                   colors: ['#ff4d6d', '#ffd700', '#ffffff', '#ff85a2'], 
+                   gravity: 0.6,
+                   scalar: 1.2 
+               });
+           }, 800);
+       }
+
+       function playStardust() {
+           clearEffects();
+           for(let i=0; i<60; i++) { 
+               let s = document.createElement('div'); s.className = 'stardust';
+               s.style.left = Math.random()*100 + 'vw'; s.style.top = Math.random()*100 + 'vh';
+               s.style.animationDelay = Math.random()*3 + 's';
+               visualContainer.appendChild(s);
+           }
+       }
+
+       // ============================================
+       // MUSIC LOGIC (3 Songs = 3 Effects)
+       // ============================================
+       // এখানে তোমার লোকাল গানের নামগুলো দেওয়া হলো (song1.mp3, song2.mp3, song3.mp3)
+       const musicTracks = [
+           { title: "Romantic Vibes ❤️", src: "song1.mp3", icon: "🎸", effect: playHearts },
+           { title: "Celebration ✨", src: "song2.mp3", icon: "🎉", effect: playConfetti },
+           { title: "Peaceful Love 🌸", src: "song3.mp3", icon: "🎻", effect: playStardust }
+       ];
+       
+       const pieOptionsContainer = document.getElementById('pieOptionsContainer');
+       const pieRadius = 80;
+       let pieItems = [];
+
+       musicTracks.forEach((track, index) => {
+           let angle = (index * (360 / musicTracks.length)) * (Math.PI / 180);
+           let div = document.createElement('div'); div.className = 'pie-option';
+           div.style.left = `${pieRadius * Math.cos(angle)}px`; div.style.top = `${pieRadius * Math.sin(angle)}px`;
+           div.innerText = track.icon; pieOptionsContainer.appendChild(div);
+           pieItems.push({ element: div, ...track });
+       });
+
+       const musicControl = document.getElementById('musicControl'), musicDisc = document.getElementById('musicDisc');
+       const bgAudio = document.getElementById('bgAudio'), musicPieMenu = document.getElementById('musicPieMenu');
+       const musicPointerWrapper = document.getElementById('musicPointerWrapper'), pieSongTitle = document.getElementById('pieSongTitle');
+
+       let isMusicTouching = false, isMusicMenuOpen = false, musicStartX, musicStartY;
+       let musicLastAngle = 0, selectedSongIndex = -1, currentSongIndex = -1;
+
+       musicControl.addEventListener('touchstart', (e) => {
+           e.preventDefault(); isMusicTouching = true; isMusicMenuOpen = false;
+           let touch = e.touches[0]; musicStartX = touch.clientX; musicStartY = touch.clientY;
+           let safeX = Math.min(musicStartX, window.innerWidth - 100); let safeY = Math.max(musicStartY, 100);
+           musicPieMenu.style.left = `${safeX}px`; musicPieMenu.style.top = `${safeY}px`;
+       });
+
+       // ============================================
+       // MAIN IMAGE RING LOGIC
+       // ============================================
+       // এখানে তোমার লোকাল ইমেজের নামগুলো দেওয়া হলো (pic1.jpg থেকে pic8.jpg)
+       const memoryData = [
+           { src: "pic1.jpg", caption: "The day my life changed, Madamji ❤️" },
+           { src: "pic2.jpg", caption: "Your smile is my peace, Amar kuchu puchu ❤️" },
+           { src: "pic3.jpg", caption: "Forever my favorite, Amar rasmalai ❤️" },
+           { src: "pic4.jpg", caption: "Holding your hand, situation jamoni hok ❤️" },
+           { src: "pic5.jpg", caption: "My world lights up when you laugh! 🥰" },
+           { src: "pic6.jpg", caption: "Toke chhara ami kichu bujhi na, Bipasha ❤️" },
+           { src: "pic7.jpg", caption: "Tui amar shei shantir jayga 🫂" },
+           { src: "pic8.jpg", caption: "Saratajibon amar sathe thakis, my love ✨" }
+       ];
+
+       const ringContainer = document.getElementById('ringContainer'), thumbnailsContainer = document.getElementById('thumbnails');
+       const centerOrb = document.getElementById('centerOrb'), pointerWrapper = document.getElementById('pointerWrapper');
+       
+       let mainItems = [], mainSelectedIndex = -1, mainLastAngle = 0; 
+       let isMainTouching = false, mainOrbX, mainOrbY, isUnlocked = false;
+       let viewedImages = new Set(); 
+
+       memoryData.forEach((data, index) => {
+           let angle = (index * (360 / memoryData.length)) * (Math.PI / 180);
+           let x = (320 / 2) + 135 * Math.cos(angle) - 30; 
+           let y = (320 / 2) + 135 * Math.sin(angle) - 30; 
+
+           let div = document.createElement('div'); div.className = 'ring-item';
+           div.style.left = `${x}px`; div.style.top = `${y}px`;
+           
+           let img = document.createElement('img'); img.src = data.src; 
+           
+           // Image load error fallback (if pic isn't added yet, it won't show broken icon)
+           img.onerror = function() { this.style.display = 'none'; };
+           
+           div.appendChild(img);
+           thumbnailsContainer.appendChild(div); mainItems.push({ element: div, src: data.src, caption: data.caption, id: index });
+       });
+
+       function checkUnlock() {
+           if(viewedImages.size === memoryData.length && !isUnlocked) {
+               isUnlocked = true;
+               centerOrb.innerHTML = "💌";
+               centerOrb.classList.add('unlocked');
+               document.getElementById('mainInstruction').innerText = "Tap the letter!";
+               confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700'] }); 
+           }
+       }
+
+       // SMART RESET FUNCTION
+       function resetRingState() {
+           isUnlocked = false;
+           viewedImages.clear(); 
+           
+           centerOrb.innerHTML = "Hold &<br>Move";
+           centerOrb.classList.remove('unlocked');
+           document.getElementById('mainInstruction').innerText = "Hold center & drag finger";
+           
+           mainItems.forEach(item => {
+               item.element.classList.remove('viewed');
+           });
+       }
+
+       centerOrb.addEventListener('touchstart', (e) => {
+           if(isUnlocked) { 
+               document.getElementById('letterModal').classList.add('show'); 
+               return; 
+           }
+           e.preventDefault(); isMainTouching = true; centerOrb.classList.add('active');
+           let rect = centerOrb.getBoundingClientRect(); mainOrbX = rect.left + rect.width/2; mainOrbY = rect.top + rect.height/2;
+       });
+
+       // ============================================
+       // TOUCH MOVE (FLUENT 360)
+       // ============================================
+       document.addEventListener('touchmove', (e) => {
+           const touch = e.touches[0];
+
+           if (isMusicTouching) {
+               let deltaX = touch.clientX - musicStartX, deltaY = touch.clientY - musicStartY;
+               if (!isMusicMenuOpen && Math.sqrt(deltaX*deltaX + deltaY*deltaY) > 15) { isMusicMenuOpen = true; musicPieMenu.classList.add('active'); }
+
+               if (isMusicMenuOpen) {
+                   e.preventDefault(); 
+                   let angleDeg = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+                   let deltaAngle = angleDeg - (musicLastAngle % 360);
+                   if (deltaAngle > 180) deltaAngle -= 360; else if (deltaAngle < -180) deltaAngle += 360;
+                   musicLastAngle += deltaAngle;
+                   musicPointerWrapper.style.transform = `rotate(${musicLastAngle}deg)`;
+
+                   let normalizedAngle = angleDeg < 0 ? angleDeg + 360 : angleDeg;
+                   let index = Math.round(normalizedAngle / (360 / musicTracks.length)) % musicTracks.length;
+
+                   if (selectedSongIndex !== index) {
+                       if (selectedSongIndex !== -1) pieItems[selectedSongIndex].element.classList.remove('highlighted');
+                       pieItems[index].element.classList.add('highlighted'); selectedSongIndex = index;
+                       pieSongTitle.innerText = pieItems[index].title;
+                   }
+               }
+           }
+
+           if (isMainTouching && !isUnlocked) {
+               e.preventDefault();
+               let deltaX = touch.clientX - mainOrbX, deltaY = touch.clientY - mainOrbY;
+               let angleDeg = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+               let deltaAngle = angleDeg - (mainLastAngle % 360);
+               if (deltaAngle > 180) deltaAngle -= 360; else if (deltaAngle < -180) deltaAngle += 360;
+               mainLastAngle += deltaAngle;
+               pointerWrapper.style.transform = `rotate(${mainLastAngle}deg)`;
+
+               let normalizedAngle = angleDeg < 0 ? angleDeg + 360 : angleDeg;
+               let index = Math.round(normalizedAngle / (360 / memoryData.length)) % memoryData.length;
+
+               if (mainSelectedIndex !== index) {
+                   if (mainSelectedIndex !== -1) mainItems[mainSelectedIndex].element.classList.remove('highlighted');
+                   mainItems[index].element.classList.add('highlighted'); mainSelectedIndex = index;
+               }
+           }
+       }, { passive: false });
+
+       // ============================================
+       // TOUCH END
+       // ============================================
+       document.addEventListener('touchend', () => {
+           if (isMusicTouching) {
+               isMusicTouching = false;
+               if (isMusicMenuOpen) {
+                   musicPieMenu.classList.remove('active');
+                   if (selectedSongIndex !== -1) {
+                       currentSongIndex = selectedSongIndex;
+                       bgAudio.src = pieItems[currentSongIndex].src;
+                       bgAudio.play().catch(e=>console.log(e));
+                       musicDisc.classList.add('spinning');
+                       pieItems[currentSongIndex].effect(); 
+                       pieItems[selectedSongIndex].element.classList.remove('highlighted');
+                       selectedSongIndex = -1; pieSongTitle.innerText = "Drag to select song";
+                   }
+               } else {
+                   if (bgAudio.paused) { 
+                       bgAudio.play().catch(e=>console.log(e)); musicDisc.classList.add('spinning'); 
+                       if(currentSongIndex === -1) { currentSongIndex = 0; pieItems[0].effect(); } 
+                   } 
+                   else { bgAudio.pause(); musicDisc.classList.remove('spinning'); }
+               }
+               isMusicMenuOpen = false;
+           }
+
+           if (isMainTouching && !isUnlocked) {
+               isMainTouching = false; centerOrb.classList.remove('active');
+               if (mainSelectedIndex !== -1) {
+                   document.getElementById('fullImg').src = mainItems[mainSelectedIndex].src;
+                   document.getElementById('modalCaption').innerText = mainItems[mainSelectedIndex].caption;
+                   document.getElementById('modal').classList.add('show');
+                   
+                   mainItems[mainSelectedIndex].element.classList.add('viewed');
+                   viewedImages.add(mainSelectedIndex);
+                   checkUnlock();
+
+                   mainItems[mainSelectedIndex].element.classList.remove('highlighted');
+                   mainSelectedIndex = -1;
+               }
+           }
+       });
+
+       // Close Image Modal
+       document.getElementById('closeBtn').addEventListener('click', () => { 
+           document.getElementById('modal').classList.remove('show'); 
+       });
+
+       // Close Letter Modal AND Reset Ring
+       document.getElementById('closeLetterBtn').addEventListener('click', () => { 
+           document.getElementById('letterModal').classList.remove('show');
+           setTimeout(resetRingState, 300); // 300ms delay adds a smooth transition effect
+       });
+   </script>
+</body>
+</html>
